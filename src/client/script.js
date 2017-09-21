@@ -1,12 +1,8 @@
 var container = document.querySelector('#shape-container');
-var keyPress = [];
-var animations = {}
 
-var pitch = 90;
+var pitch = 0;
 var yaw = 0;
 var roll = 0;
-
-
 
 
 window.addEventListener('keyup', (event)=>{
@@ -29,10 +25,15 @@ window.addEventListener('keyup', (event)=>{
     }
 
     if(rotate.pitch || rotate.yaw || rotate.roll){
-        console.log("something")
+   
         removeAnimation()
 
-        container.appendChild(addAnimation({pitch:0, yaw:0, roll:0}, {pitch:rotate.pitch, yaw:rotate.yaw, roll:rotate.roll}))
+        container.appendChild(addAnimation({pitch:pitch, yaw:yaw, roll:roll}, {pitch: pitch+rotate.pitch, yaw: yaw+rotate.yaw, roll: roll+rotate.roll}))
+
+        // update the current position
+        pitch += rotate.pitch;
+        yaw += rotate.yaw;
+        roll += rotate.roll
     }
 })
 
