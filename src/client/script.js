@@ -4,6 +4,8 @@ var pitch = 0;
 var yaw = 0;
 var roll = 0;
 
+var ws
+
 
 window.addEventListener('keyup', (event)=>{
 
@@ -60,6 +62,28 @@ removeAnimation = function (){
         container.removeChild(animation)
     })
 }
+
+setupWsSession = ()=>{
+    if(ws){
+        ws.onerror = ws.onopen = ws.onclose = null
+        ws.close()
+    }
+
+    ws = new WebSocket(`ws://${location.host}`)
+    ws.onerror = ()=>{ console.log("Some error")}
+    ws.onopen = ()=>{ console.log("Websocket connection establised")}
+    ws.onclose = ()=>{ console.log("Websocket closed")}
+    ws.onmessage = (messageString)=>{
+        console.log(messageString)
+    }
+
+    fetch('/session', {method:'POST', credentials: 'same-origin'})
+        .then(()=>{console.log('Session has a userID')})
+}
+
+
+// setup the session
+setupWsSession()
 
 
 

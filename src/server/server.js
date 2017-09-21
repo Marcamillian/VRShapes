@@ -4,6 +4,7 @@ const session = require('express-session');
 const express = require('express')
 const http = require('http')
 const WebSocket = require('ws')
+const uuid = require('uuid')
 
 
 // game objects
@@ -23,7 +24,13 @@ app.use(express.static('./src/client'));
 app.use(sessionParser);
 
 // EXPRESS ROUTING
-
+app.post('/session', (req, res)=>{
+    const id=uuid.v4();
+    
+    console.log(`Updating session for user ${id}`)
+    req.session.userId = id;
+    res.send({result:"OK", message:`Session updated`})
+})
 
 // CREATE THE HTTP SERVER
 server = http.createServer(app);
@@ -41,7 +48,7 @@ wss = new WebSocket.Server({
 })
 
 // CONFIGURE WEBSOCKET SERVER
-wss.on(`connection`, (wss,req)=>{
+wss.on(`connection`, (ws,req)=>{
     ws.userId = req.session.userId
 })
 
