@@ -23,13 +23,14 @@ sessionParser = session({
 app.use(express.static('./src/client'));
 app.use(sessionParser);
 
+
+
 // EXPRESS ROUTING
-app.post('/session', (req, res)=>{
+app.post('/login', (req, res)=>{
     const id=uuid.v4();
     
     console.log(`Updating session for user ${id}`)
     req.session.userId = id;
-    res.send({result:"OK", message:`Session updated`})
 })
 
 // CREATE THE HTTP SERVER
@@ -48,7 +49,7 @@ wss = new WebSocket.Server({
 })
 
 // CONFIGURE WEBSOCKET SERVER
-wss.on(`connection`, (ws,req)=>{
+wss.on(`connection`, (wss,req)=>{
     ws.userId = req.session.userId
 })
 
