@@ -7,11 +7,14 @@ const WebSocket = require('ws')
 const uuid = require('uuid')
 
 
-// game objects
+// server objects
 var app = express();
 var sessionParser;
 var server;
 var wss;
+
+// game variables
+var controls = ['up', 'down', 'left', 'right']
 
 sessionParser = session({
     saveUninitialized: false,
@@ -26,13 +29,19 @@ app.use(sessionParser);
 
 
 // EXPRESS ROUTING
-app.post('/login', (req, res)=>{
+app.post('/login', (req, res)=>{ // for initialising the websocket connection
     const id=uuid.v4();
     
     console.log(`Updating session for user ${id}`)
     req.session.userId = id;
 
     res.send({result:"OK", message: 'Session updated '})
+})
+
+app.post('/control', (req, res)=>{ // for pushing control to the VR view
+    
+    wss.broadcast("left")
+    res.send({result:'OK', mesage: 'Control sent'})
 })
 
 // CREATE THE HTTP SERVER
@@ -57,7 +66,21 @@ wss.on(`connection`, (ws,req)=>{
     ws.on('message', (response)=>{
         let message = JSON.parse(response)
         console.log(message)
+        // broadcast the control to the appropriate places
+        wss.broadcast("left")
     })
 })
+
+wss.broadcast = (control)=>{
+    let message = {
+        result: 'OK',
+        type:'control',
+        data:control
+    }
+
+    wss.clients.forEach((ws)=>{
+        ws.send(JSON.stringify(message))
+    })
+}
 
 server.listen(8080, ()=>{console.log("Listening on a port 8080")})

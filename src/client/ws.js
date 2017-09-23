@@ -1,4 +1,4 @@
-(()=>{
+connections = (()=>{
     var ws;
     var keysDown = {}
 
@@ -27,8 +27,17 @@
         ws.onclose = ()=> showMessage('Websocket connection closed')
         ws.onmessage = (messageString)=>{
             let message = JSON.parse(messageString.data)
-                
-            if(message.result != 'OK'){
+
+            if(message.result == 'OK'){
+                switch(message.type){
+                    case 'control':
+                        console.log(`ws control: ${message.data}`)
+                        break;
+                    default:
+                        console.log("ws message: unknown type")
+                        break
+                }
+            }else{
                 console.error(`${message.type} : ERROR - ${message.data.errorMessage}`)
             }
 
@@ -53,18 +62,35 @@
         ws.send(JSON.stringify(message))
     }
 
-    makeConnection()
+    const controlSetup =  ()=>{
+        // CONTROL TRIGGERS
+        window.addEventListener('keydown', (e)=>{ // record keypressed
+            keysDown[e.keyCode] = true;
+            //sendInput()
+            sendControl()
+        })
 
+        window.addEventListener('keyup', (e)=>{ // remove keypressed
+            delete keysDown[e.keyCode]
+        })
 
-    // CONTROL TRIGGERS
-    window.addEventListener('keydown', (e)=>{ // record keypressed
-        keysDown[e.keyCode] = true;
-        sendInput()
-    })
+        return "Controls setup"
+    }
 
-    window.addEventListener('keyup', (e)=>{ // remove keypressed
-        delete keysDown[e.keyCode]
-    })
+    const sendControl = ()=>{
+        let myHeaders = new Headers({
+            "Control":keysDown
+        })
 
+        fetch('/control', {method:'POST', credentials:'same-origin', headers: myHeaders})
+            .then(handleResponse)
+            .then(stringifyObject)
+            .then(showMessage)
+            .catch((err)=>showMessage(err.message))
+    }
 
+    return {
+        wsConnectionSetup: makeConnection,
+        wsControlSetup: controlSetup
+    }
 })()
