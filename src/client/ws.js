@@ -1,5 +1,6 @@
 (()=>{
     var ws;
+    var keysDown = {}
 
     const showMessage = (message)=>{
         console.log(message)
@@ -20,7 +21,6 @@
             ws.onerror = ws.onopen = ws.onclose = null;
             ws.close()
         }
-
         ws = new WebSocket(`ws://${location.host}`)
         ws.onerror = ()=> showMessage('Websocket Error')
         ws.onopen = ()=> showMessage(' Websocket connection established')
@@ -33,7 +33,7 @@
             }
 
         }
-
+        console.log(`websocket ${ws}`)
     }
 
     const makeConnection = ()=>{
@@ -41,9 +41,30 @@
             .then(handleResponse)
             .then(stringifyObject)
             .then(showMessage)
+            .then(setupWsSession)
             .catch((err)=> showMessage(err.message))
     }
 
+    const sendInput = ()=>{
+        let message = {
+            'type':'control',
+            'data': {}
+        }
+        ws.send(JSON.stringify(message))
+    }
+
     makeConnection()
-    setupWsSession()
+
+
+    // CONTROL TRIGGERS
+    window.addEventListener('keydown', (e)=>{ // record keypressed
+        keysDown[e.keyCode] = true;
+        sendInput()
+    })
+
+    window.addEventListener('keyup', (e)=>{ // remove keypressed
+        delete keysDown[e.keyCode]
+    })
+
+
 })()

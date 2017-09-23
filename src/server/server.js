@@ -31,6 +31,8 @@ app.post('/login', (req, res)=>{
     
     console.log(`Updating session for user ${id}`)
     req.session.userId = id;
+
+    res.send({result:"OK", message: 'Session updated '})
 })
 
 // CREATE THE HTTP SERVER
@@ -49,8 +51,13 @@ wss = new WebSocket.Server({
 })
 
 // CONFIGURE WEBSOCKET SERVER
-wss.on(`connection`, (wss,req)=>{
-    ws.userId = req.session.userId
+wss.on(`connection`, (ws,req)=>{
+    ws.userId = req.session.userId;
+
+    ws.on('message', (response)=>{
+        let message = JSON.parse(response)
+        console.log(message)
+    })
 })
 
 server.listen(8080, ()=>{console.log("Listening on a port 8080")})
