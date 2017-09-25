@@ -16,7 +16,9 @@ connections = (()=>{
         return JSON.stringify(jsonMessage, null, 2)
     }
 
-    const setupWsSession = ()=>{
+    const setupWsSession = (messageHandler)=>{
+
+        console.log("function passed in", messageHandler)
         if(ws){
             ws.onerror = ws.onopen = ws.onclose = null;
             ws.close()
@@ -26,31 +28,26 @@ connections = (()=>{
         ws.onopen = ()=> showMessage(' Websocket connection established')
         ws.onclose = ()=> showMessage('Websocket connection closed')
         ws.onmessage = (messageString)=>{
-            let message = JSON.parse(messageString.data)
-
-            if(message.result == 'OK'){
-                switch(message.type){
-                    case 'control':
-                        console.log(`ws control: ${message.data}`)
-                        break;
-                    default:
-                        console.log("ws message: unknown type")
-                        break
+            let messageObject = JSON.parse(messageString.data)
+    
+            if(messageObject.result == 'OK'){
+                if (messageHandler){
+                    messageHandler(messageObject)
+                }else{
+                    defaultMessageHandler(messageObject)
                 }
             }else{
-                console.error(`${message.type} : ERROR - ${message.data.errorMessage}`)
+                console.error(`${messageObject.type} : ERROR - ${messageObject.data.errorMessage}`)
             }
-
         }
-        console.log(`websocket ${ws}`)
     }
 
-    const makeConnection = ()=>{
+    const makeConnection = (messageHandler)=>{
         fetch('./login', {method:'POST', credentials: 'same-origin'})
             .then(handleResponse)
             .then(stringifyObject)
             .then(showMessage)
-            .then(setupWsSession)
+            .then(setupWsSession(messageHandler))
             .catch((err)=> showMessage(err.message))
     }
 
@@ -88,8 +85,12 @@ connections = (()=>{
             .catch((err)=>showMessage(err.message))
     }
 
+    const defaultMessageHandler = (messageObject)=>{
+        console.log(messageObject)
+    }
+
     return {
-        wsConnectionSetup: makeConnection,
+        listenForControls: makeConnection,
         wsControlSetup: controlSetup
     }
 })()

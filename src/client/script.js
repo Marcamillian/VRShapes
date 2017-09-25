@@ -1,43 +1,10 @@
-var container = document.querySelector('#shape-container');
+
+
+var container = document.querySelector('#shape-container'); // for removing animation
 
 var pitch = 0;
 var yaw = 0;
 var roll = 0;
-
-var ws
-
-
-window.addEventListener('keyup', (event)=>{
-
-    var rotate = { pitch: 0, yaw: 0, roll:0 } 
-    console.log(event.keyCode)
-    switch(event.keyCode){
-        case 73: // i
-            rotate.pitch = 90
-            break;
-        case 74:    // j
-            rotate.yaw = 90
-            break;
-        case 75:    // k
-            rotate.pitch = -90
-            break;
-        case 76:    // l
-            rotate.yaw = -90
-            break;
-    }
-
-    if(rotate.pitch || rotate.yaw || rotate.roll){
-   
-        removeAnimation()
-
-        container.appendChild(addAnimation({pitch:pitch, yaw:yaw, roll:roll}, {pitch: pitch+rotate.pitch, yaw: yaw+rotate.yaw, roll: roll+rotate.roll}))
-
-        // update the current position
-        pitch += rotate.pitch;
-        yaw += rotate.yaw;
-        roll += rotate.roll
-    }
-})
 
 addAnimation = function (from,to){
 
@@ -63,9 +30,42 @@ removeAnimation = function (){
     })
 }
 
-setupWsSession = ()=>{
-    
+const recieveControl = function(wsData){
+    changeAngle = {'pitch':0, 'yaw':0, 'roll':0}
+
+    switch (wsData.data){
+        case 'left':
+            changeAngle.roll = 90;
+            break;
+        case 'right':
+            changeAngle.roll = -90
+            break;
+        case 'up':
+            changeAngle.pitch = 90
+            break;
+        case 'down':
+            changeAngle.pitch = -90
+            break;
+        default:
+            console.log('unknown control')
+            return "control cancelled"
+            break
+    }
+    if(changeAngle.pitch !=0 || changeAngle.yaw !=0 || changeAngle.roll !=0){
+        removeAnimation()
+        const animElement = addAnimation({'pitch':pitch, 'yaw':yaw, 'roll':roll},
+                        {'pitch':pitch+changeAngle.pitch ,'yaw':yaw+changeAngle.yaw, 'roll':roll+changeAngle.roll}
+        )
+
+        container.appendChild(animElement)
+
+        pitch = pitch+changeAngle.pitch;
+        yaw = yaw+changeAngle.yaw;
+        roll = roll+changeAngle.roll;
+    }   
 }
+
+connections.listenForControls(recieveControl)
 
 
 
