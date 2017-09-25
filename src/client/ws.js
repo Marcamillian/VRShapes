@@ -66,7 +66,6 @@ connections = (()=>{
         // CONTROL TRIGGERS
         window.addEventListener('keydown', (e)=>{ // record keypressed
             keysDown[e.keyCode] = true;
-            //sendInput()
             sendControl()
         })
 
@@ -79,7 +78,7 @@ connections = (()=>{
 
     const sendControl = ()=>{
         let myHeaders = new Headers({
-            "Control":keysDown
+            "control":JSON.stringify(keysDown)
         })
 
         fetch('/control', {method:'POST', credentials:'same-origin', headers: myHeaders})

@@ -40,6 +40,9 @@ app.post('/login', (req, res)=>{ // for initialising the websocket connection
 
 app.post('/control', (req, res)=>{ // for pushing control to the VR view
     
+    let keysPressed = JSON.parse(req.headers['control']);
+    console.log(keysPressed);
+
     wss.broadcast("left")
     res.send({result:'OK', mesage: 'Control sent'})
 })
