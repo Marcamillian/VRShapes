@@ -78,17 +78,18 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
 
     if(rotateUpdate){
         wss.broadcast("rotate",{
-            to:{'pitch':shapeRotation.pitch + rotateTo.pitch ,
-                'yaw': shapeRotation.yaw + rotateTo.yaw,
-                'roll':shapeRotation.roll + rotateTo.roll},
+            to:{'pitch': rotateTo.pitch ,
+                'yaw': rotateTo.yaw,
+                'roll': rotateTo.roll},
             from: shapeRotation
             }
         )
 
         // update the 
-        shapeRotation.pitch += rotateTo.pitch
-        shapeRotation.yaw += rotateTo.yaw
-        shapeRotation.roll += rotateTo.roll
+        shapeRotation.pitch = rotateTo.pitch
+        shapeRotation.yaw = rotateTo.yaw
+        shapeRotation.roll = rotateTo.roll
+        console.log(shapeRotation)
     }
 
     res.send({result:'OK', mesage: 'Control sent'})
