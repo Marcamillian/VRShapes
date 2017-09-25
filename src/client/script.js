@@ -31,38 +31,52 @@ removeAnimation = function (){
 }
 
 const recieveControl = function(wsData){
-    changeAngle = {'pitch':0, 'yaw':0, 'roll':0}
+    switch(wsData.type){
+        case "control":
+            changeAngle = {'pitch':0, 'yaw':0, 'roll':0}
+            switch (wsData.data){
+                case 'left':
+                    changeAngle.roll = 90;
+                    break;
+                case 'right':
+                    changeAngle.roll = -90
+                    break;
+                case 'up':
+                    changeAngle.pitch = 90
+                    break;
+                case 'down':
+                    changeAngle.pitch = -90
+                    break;
+                default:
+                    console.log('unknown control')
+                    return "control cancelled"
+                    break
+            }
+            if(changeAngle.pitch !=0 || changeAngle.yaw !=0 || changeAngle.roll !=0){
+                removeAnimation()
+                const animElement = addAnimation({'pitch':pitch, 'yaw':yaw, 'roll':roll},
+                                {'pitch':pitch+changeAngle.pitch ,'yaw':yaw+changeAngle.yaw, 'roll':roll+changeAngle.roll}
+                )
+        
+                container.appendChild(animElement)
+        
+                pitch = pitch+changeAngle.pitch;
+                yaw = yaw+changeAngle.yaw;
+                roll = roll+changeAngle.roll;
+            }
+            break;
+    
+        case "rotate":
+            const rotateFrom = wsData.data.from;
+            const rotateTo = wsData.data.to
 
-    switch (wsData.data){
-        case 'left':
-            changeAngle.roll = 90;
-            break;
-        case 'right':
-            changeAngle.roll = -90
-            break;
-        case 'up':
-            changeAngle.pitch = 90
-            break;
-        case 'down':
-            changeAngle.pitch = -90
-            break;
-        default:
-            console.log('unknown control')
-            return "control cancelled"
-            break
-    }
-    if(changeAngle.pitch !=0 || changeAngle.yaw !=0 || changeAngle.roll !=0){
-        removeAnimation()
-        const animElement = addAnimation({'pitch':pitch, 'yaw':yaw, 'roll':roll},
-                        {'pitch':pitch+changeAngle.pitch ,'yaw':yaw+changeAngle.yaw, 'roll':roll+changeAngle.roll}
-        )
+            removeAnimation()
+            const animElement = addAnimation(rotateFrom, rotateTo);
+            container.appendChild(animElement)
 
-        container.appendChild(animElement)
-
-        pitch = pitch+changeAngle.pitch;
-        yaw = yaw+changeAngle.yaw;
-        roll = roll+changeAngle.roll;
-    }   
+            break;
+     }
+     
 }
 
 connections.listenForControls(recieveControl)

@@ -18,7 +18,6 @@ connections = (()=>{
 
     const setupWsSession = (messageHandler)=>{
 
-        console.log("function passed in", messageHandler)
         if(ws){
             ws.onerror = ws.onopen = ws.onclose = null;
             ws.close()

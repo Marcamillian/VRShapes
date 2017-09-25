@@ -14,7 +14,9 @@ var server;
 var wss;
 
 // game variables
-var controls = ['up', 'down', 'left', 'right']
+var shapeRotation = {'pitch':0, "yaw":0, "roll":0}
+
+
 
 sessionParser = session({
     saveUninitialized: false,
@@ -41,19 +43,52 @@ app.post('/login', (req, res)=>{ // for initialising the websocket connection
 app.post('/control', (req, res)=>{ // for pushing control to the VR view
     
     let keysPressed = JSON.parse(req.headers['control']);
-    
+    let rotateTo = Object.assign({}, shapeRotation)
+    let rotateUpdate = false;
     
     if(keysPressed[73]){
-        wss.broadcast("up")
+        wss.broadcast('control', "up")
     }
     if(keysPressed[74]){    // j
-        wss.broadcast("left")     
+        wss.broadcast("control", "left")     
     }
     if(keysPressed[75]){ // k
-        wss.broadcast("down")
+        wss.broadcast("control", "down")
     }
     if(keysPressed[76]){    //k
-        wss.broadcast("right")
+        wss.broadcast("control","right")
+    }
+
+    if(keysPressed[37]){
+        rotateTo.pitch += 90
+        rotateUpdate = true
+    }
+    if(keysPressed[38]){  
+        rotateTo.pitch -= 90
+        rotateUpdate = true
+    }
+    if(keysPressed[39]){  
+        rotateTo.yaw += 90
+        rotateUpdate = true
+    }
+    if(keysPressed[40]){  
+        rotateTo.yaw -= 90
+        rotateUpdate = true
+    }
+
+    if(rotateUpdate){
+        wss.broadcast("rotate",{
+            to:{'pitch':shapeRotation.pitch + rotateTo.pitch ,
+                'yaw': shapeRotation.yaw + rotateTo.yaw,
+                'roll':shapeRotation.roll + rotateTo.roll},
+            from: shapeRotation
+            }
+        )
+
+        // update the 
+        shapeRotation.pitch += rotateTo.pitch
+        shapeRotation.yaw += rotateTo.yaw
+        shapeRotation.roll += rotateTo.roll
     }
 
     res.send({result:'OK', mesage: 'Control sent'})
@@ -86,11 +121,11 @@ wss.on(`connection`, (ws,req)=>{
     })
 })
 
-wss.broadcast = (control)=>{
+wss.broadcast = (type,data)=>{
     let message = {
         result: 'OK',
-        type:'control',
-        data:control
+        type:type,
+        data:data
     }
 
     wss.clients.forEach((ws)=>{
