@@ -60,19 +60,19 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
     }
 
     if(keysPressed[37]){
-        rotateTo.pitch += 90
-        rotateUpdate = true
-    }
-    if(keysPressed[38]){  
         rotateTo.pitch -= 90
         rotateUpdate = true
     }
+    if(keysPressed[38]){  
+        rotateTo.roll += 90
+        rotateUpdate = true
+    }
     if(keysPressed[39]){  
-        rotateTo.yaw += 90
+        rotateTo.pitch += 90
         rotateUpdate = true
     }
     if(keysPressed[40]){  
-        rotateTo.yaw -= 90
+        rotateTo.roll -= 90
         rotateUpdate = true
     }
 
