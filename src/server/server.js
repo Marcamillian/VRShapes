@@ -32,10 +32,14 @@ app.use(sessionParser);
 
 // EXPRESS ROUTING
 app.post('/login', (req, res)=>{ // for initialising the websocket connection
+    
+    console.log("wss clients:", wss.clients)
+
+    console.log("HTTP request to set up the session")
     const id=uuid.v4();
     
-    console.log(`Updating session for user ${id}`)
     req.session.userId = id;
+    console.log(`Creating and assigning sessionID: ${req.session.userId}`)
 
     res.send({result:"OK", message: 'Session updated '})
 })
@@ -104,14 +108,17 @@ wss = new WebSocket.Server({
         console.log('Parsing session from request ...');
         sessionParser(info.req, {}, ()=>{
             console.log(`Session is parsed for user: ${info.req.session.userId}`)
+            console.log()
             // reject the connection if the user if not revognised
-            done(info.req.session.userId)
+            //done(info.req.session.userId)
+            done(true)
         })
     },server
 })
 
 // CONFIGURE WEBSOCKET SERVER
 wss.on(`connection`, (ws,req)=>{
+
     ws.userId = req.session.userId;
 
     ws.on('message', (response)=>{

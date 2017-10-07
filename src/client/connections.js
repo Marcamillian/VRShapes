@@ -90,6 +90,7 @@ connections = (()=>{
 
     return {
         listenForControls: makeConnection,
-        controlSetup: controlSetup
+        controlSetup: controlSetup,
+        wsConn:setupWsSession,
     }
 })()
