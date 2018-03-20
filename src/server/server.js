@@ -62,21 +62,32 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
     if(keysPressed[76]){    //k
         wss.broadcast("control","right")
     }
+    
+        // orientation of the model
+    var horizontal;
+    var vertical;
+    var pitchThing = shapeRotation.pitch/180
+    var rollThing = shapeRotation.roll/180;
+    horizontal = (Math.round(pitchThing) == pitchThing) ? 'pitch' : 'yaw';
+    vertical = (Math.round(rollThing) == rollThing) ? 'roll' : 'pitch'
 
-    if(keysPressed[37]){
-        rotateTo.pitch -= 90
-        rotateUpdate = true
-    }
-    if(keysPressed[38]){  
+    console.log(`rotate ${horizontal} ${vertical}`)
+
+    // create the roll to animation
+    if(keysPressed[37]){ // left
         rotateTo.roll += 90
         rotateUpdate = true
     }
-    if(keysPressed[39]){  
-        rotateTo.pitch += 90
+    if(keysPressed[38]){  // up
+        rotateTo.pitch -= 90
         rotateUpdate = true
     }
-    if(keysPressed[40]){  
+    if(keysPressed[39]){  // right
         rotateTo.roll -= 90
+        rotateUpdate = true
+    }
+    if(keysPressed[40]){  // down
+        rotateTo.pitch += 90
         rotateUpdate = true
     }
 
@@ -89,7 +100,7 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
             }
         )
 
-        // update the 
+        // update the model
         shapeRotation.pitch = rotateTo.pitch
         shapeRotation.yaw = rotateTo.yaw
         shapeRotation.roll = rotateTo.roll
@@ -108,10 +119,9 @@ wss = new WebSocket.Server({
         console.log('Parsing session from request ...');
         sessionParser(info.req, {}, ()=>{
             console.log(`Session is parsed for user: ${info.req.session.userId}`)
-            console.log()
             // reject the connection if the user if not revognised
             //done(info.req.session.userId)
-            done(true)
+            done(true)  // automatically accept the connection
         })
     },server
 })
