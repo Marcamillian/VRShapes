@@ -1,5 +1,3 @@
-
-
 var container = document.querySelector('#shape-container'); // for removing animation
 
 var pitch = 0;
@@ -79,7 +77,18 @@ const recieveControl = function(wsData){
      
 }
 
-connections.listenForControls(recieveControl)
+const rotateModel = (direction)=>{
+    animComponent = animationHTML = addAnimation({pitch:0,yaw:0, roll:0}, {pitch:90, yaw:90, roll:90})
+    container.appendChild(animComponent);
+}
+
+const saySomething = ()=>{
+    console.log("SOMETHING THAT NEEDS SAYING")
+}
+
+//connections.listenForControls(recieveControl)
+
+
 
 
 
