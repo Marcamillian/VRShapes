@@ -1,10 +1,31 @@
-var container = document.querySelector('#shape-container'); // for removing animation
+var modelContainer = document.querySelector('#shape-container'); // for removing animation
 
-var pitch = 0;
-var yaw = 0;
-var roll = 0;
+modelContainer.addEventListener('animationend', function(){
 
-addAnimation = function (from,to){
+    // get the active animation element
+    var rotateAnims = this.querySelectorAll('a-animation')
+
+    // get the end position of the animation
+    var endPosition = rotateAnims[0].getAttribute('to')
+
+    // remove the animation element
+    removeAnimations(this)
+
+    // set the model to the end end postion
+    this.setAttribute('rotation', endPosition)
+    
+    // update the model
+    const rotationArray = endPosition.split(" ");
+
+    modelRotation.pitch = Number(rotationArray[0]);
+    modelRotation.yaw = Number(rotationArray[1]);
+    modelRotation.roll = Number(rotationArray[2]);
+
+})
+
+var modelRotation = { pitch: 0, yaw: 0, roll: 0 }
+
+const genRotationAnimEl = function (from,to){
 
     var rotateAnimation = document.createElement('a-animation')
 
@@ -22,9 +43,9 @@ addAnimation = function (from,to){
     return rotateAnimation
 }
 
-removeAnimation = function (){
-    container.querySelectorAll('a-animation').forEach((animation)=>{
-        container.removeChild(animation)
+const removeAnimations = function (element){
+    element.querySelectorAll('a-animation').forEach((animation)=>{
+        element.removeChild(animation)
     })
 }
 
@@ -77,13 +98,8 @@ const recieveControl = function(wsData){
      
 }
 
-const rotateModel = (direction)=>{
-    animComponent = animationHTML = addAnimation({pitch:0,yaw:0, roll:0}, {pitch:90, yaw:90, roll:90})
-    container.appendChild(animComponent);
-}
-
-const saySomething = ()=>{
-    console.log("SOMETHING THAT NEEDS SAYING")
+const hasAnimations = function(element){
+    return (element.querySelectorAll('a-animation').length > 0 ) ? true : false;
 }
 
 //connections.listenForControls(recieveControl)
