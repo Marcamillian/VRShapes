@@ -29,10 +29,10 @@ AFRAME.registerComponent('gaze-control',{
                     to[controls.vAxis] += -90*(controls.vSense);
                 break;
                 case 'right':
-                    to[controls.hAxis] += 90*(controls.vSense);
+                    to[controls.hAxis] += 90*(controls.hSense);
                 break;
                 case 'left':
-                    to[controls.hAxis] += -90*(controls.vSense);
+                    to[controls.hAxis] += -90*(controls.hSense);
                 break;
                 default:
                     console.log(`Unknown rotate direction : ${controlDirection}`)

@@ -6,6 +6,13 @@ const rotationMatrix_vertical = [  // [yaw][roll]
     ['roll', 'roll', 'roll', 'roll']
 ]
 
+const rotationMatrix_VSense = [ // [yaw][roll]
+    [-1,1,1,1],
+    [1,1,1,1],
+    [1,1,1,1],
+    [1,1,1,1],
+]
+
 const rotationMatrix_horizontal = [ // [pitch][yaw][roll]
     [['yaw', 'pitch', 'yaw', 'pitch'],
      ['yaw', 'pitch', 'yaw', 'pitch'],
@@ -16,6 +23,19 @@ const rotationMatrix_horizontal = [ // [pitch][yaw][roll]
      ['pitch', 'yaw', 'pitch', 'yaw'],
      ['roll', 'roll', 'roll', 'roll'],
      ['pitch', 'yaw', 'pitch', 'yaw']
+    ]
+]
+
+const rotationMatrix_HSense = [
+    [[1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1]
+    ],
+    [[1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1]
     ]
 ]
 
@@ -48,7 +68,10 @@ modelContainer.addEventListener('animationend', function(){
     modelRotation.roll = Number(rotationArray[2]);
 
     Object.keys(modelRotation).forEach(( key )=>{
-        modelRotation[key] = modelRotation[key] % 360;
+        var adjustedAngle = modelRotation[key] % 360;
+        if(adjustedAngle < 0) adjustedAngle = 360 + adjustedAngle;
+        
+        modelRotation[key] = adjustedAngle;
     })
 
 })
@@ -148,12 +171,14 @@ const getControlAxes = function(direction){
         let yawSegment = Math.ceil(modelRotation.yaw/90)%4
         let rollSegment = Math.ceil(modelRotation.roll/90)%4
 
+        console.log(`PitchSeg: ${pitchSegment} || YawSegment: ${yawSegment} || RollSegment: ${rollSegment}`)
+
         vAxis = rotationMatrix_vertical[yawSegment][rollSegment];
         hAxis = rotationMatrix_horizontal[pitchSegment%2][yawSegment][rollSegment]
 
+        vSense = ( yawSegment == 2 ) ? 1 : -1; // if back facing us (yaw 180deg) 
         hSense = 1;
-        vSense = 1;
-
+        
         return {
             vAxis,
             vSense,
