@@ -19,22 +19,24 @@ AFRAME.registerComponent('gaze-control',{
             let from = Object.assign({}, modelRotation)
             let to = Object.assign({}, modelRotation)
 
-            to.pitch += 90;
+            let controls = getControlAxes();
 
-            /*
             switch (controlDirection){
                 case 'up':
+                    to[controls.vAxis] += 90*(controls.vSense);
                 break;
                 case 'down':
-                break;
-                case 'left':
+                    to[controls.vAxis] += -90*(controls.vSense);
                 break;
                 case 'right':
+                    to[controls.hAxis] += 90*(controls.vSense);
+                break;
+                case 'left':
+                    to[controls.hAxis] += -90*(controls.vSense);
                 break;
                 default:
                     console.log(`Unknown rotate direction : ${controlDirection}`)
             }
-            */
             
             // add the animation html to the model
             modelContainer.appendChild(genRotationAnimEl(from, to))

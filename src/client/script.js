@@ -1,4 +1,30 @@
+// = Define constants
+const rotationMatrix_vertical = [  // [yaw][roll]
+    ['pitch', 'yaw', 'pitch', 'yaw'],
+    ['roll', 'roll', 'roll', 'roll'],
+    ['pitch', 'yaw', 'pitch', 'yaw'],
+    ['roll', 'roll', 'roll', 'roll']
+]
+
+const rotationMatrix_horizontal = [ // [pitch][yaw][roll]
+    [['yaw', 'pitch', 'yaw', 'pitch'],
+     ['yaw', 'pitch', 'yaw', 'pitch'],
+     ['yaw', 'pitch', 'yaw', 'pitch'],
+     ['yaw', 'pitch', 'yaw', 'pitch']
+    ],
+    [['roll', 'roll', 'roll', 'roll'],
+     ['pitch', 'yaw', 'pitch', 'yaw'],
+     ['roll', 'roll', 'roll', 'roll'],
+     ['pitch', 'yaw', 'pitch', 'yaw']
+    ]
+]
+
+// = Define variables
+
 var modelContainer = document.querySelector('#shape-container'); // for removing animation
+var modelRotation = { pitch: 0, yaw: 0, roll: 0 }
+
+// Event listeners
 
 modelContainer.addEventListener('animationend', function(){
 
@@ -21,9 +47,14 @@ modelContainer.addEventListener('animationend', function(){
     modelRotation.yaw = Number(rotationArray[1]);
     modelRotation.roll = Number(rotationArray[2]);
 
+    Object.keys(modelRotation).forEach(( key )=>{
+        modelRotation[key] = modelRotation[key] % 360;
+    })
+
 })
 
-var modelRotation = { pitch: 0, yaw: 0, roll: 0 }
+
+// == Functions ==
 
 const genRotationAnimEl = function (from,to){
 
@@ -100,6 +131,48 @@ const recieveControl = function(wsData){
 
 const hasAnimations = function(element){
     return (element.querySelectorAll('a-animation').length > 0 ) ? true : false;
+}
+
+// something that rotates properly relative to the current
+// rotation of the model
+const getControlAxes = function(direction){
+
+        // there are 6 faces we could be looking at - jsut need to figure out which and which orientation
+
+        // default would be pitch and yaw
+            // modify which are in control 
+
+        let hAxis, hSense, vAxis, vSense;
+
+        let pitchSegment = Math.ceil(modelRotation.pitch/90)%4
+        let yawSegment = Math.ceil(modelRotation.yaw/90)%4
+        let rollSegment = Math.ceil(modelRotation.roll/90)%4
+
+        vAxis = rotationMatrix_vertical[yawSegment][rollSegment];
+        hAxis = rotationMatrix_horizontal[pitchSegment%2][yawSegment][rollSegment]
+
+        hSense = 1;
+        vSense = 1;
+
+        return {
+            vAxis,
+            vSense,
+            hAxis,
+            hSense
+        }
+}
+
+const rotateModel = function(to){
+
+    modelContainer.setAttribute('rotation', `${to.pitch} ${to.yaw} ${to.roll}`)
+
+    modelRotation.pitch = to.pitch;
+    modelRotation.yaw = to.yaw;
+    modelRotation.roll = to.roll;
+
+    Object.keys(modelRotation).forEach(( key )=>{
+        modelRotation[key] = modelRotation[key] % 360;
+    })
 }
 
 //connections.listenForControls(recieveControl)
