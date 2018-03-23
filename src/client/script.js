@@ -1,33 +1,85 @@
 // = Define constants
 const rotationMatrix_vertical = [  // [yaw][roll]
-    ['pitch', 'yaw', 'pitch', 'yaw'],
-    ['roll', 'roll', 'roll', 'roll'],
-    ['pitch', 'yaw', 'pitch', 'yaw'],
-    ['roll', 'roll', 'roll', 'roll']
+    [['pitch', 'pitch', 'pitch', 'pitch'],
+     ['roll', 'roll', 'roll', 'roll'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['roll', 'roll', 'roll', 'roll']
+    ],
+    [['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch']
+    ],
+    [['pitch', 'pitch', 'pitch', 'pitch'],
+     ['roll', 'roll', 'roll', 'roll'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['roll', 'roll', 'roll', 'roll']
+    ],
+    [['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch'],
+     ['pitch', 'pitch', 'pitch', 'pitch']
+    ]
 ]
 
-const rotationMatrix_VSense = [ // [yaw][roll]
-    [-1,-1,1,1],
-    [1,1,1,1],
-    [1,1,1,1],
-    [1,1,1,1],
+const rotationMatrix_VSense =[ //[pitch][yaw][roll]
+    [[-1,-1,-1,-1],
+     [-1,-1,-1,-1],
+     [1,1,1,1],
+     [1,1,1,1]
+    ],
+    [[-1,-1,-1,-1],
+     [-1,-1,-1,-1],
+     [1,1,1,1],
+     [1,1,1,1]
+    ],
+    [[-1,-1,-1,-1],
+     [1,1,1,1],
+     [1,1,1,1],
+     [-1,-1,-1,-1]
+    ],
+    [[-1,-1,-1,-1],
+     [-1,-1,-1,-1],
+     [1,1,1,1],
+     [1,1,1,1]
+    ]
 ]
 
 const rotationMatrix_horizontal = [ // [pitch][yaw][roll]
-    [['yaw', 'pitch', 'yaw', 'pitch'],
-     ['yaw', 'pitch', 'yaw', 'pitch'],
-     ['yaw', 'pitch', 'yaw', 'pitch'],
-     ['yaw', 'pitch', 'yaw', 'pitch']
+    [['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw']
     ],
     [['roll', 'roll', 'roll', 'roll'],
-     ['pitch', 'yaw', 'pitch', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
+     ['roll', 'roll', 'roll', 'roll'],
+     ['pitch', 'yaw', 'pitch', 'yaw']
+    ],
+    [['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
+     ['yaw', 'yaw', 'yaw', 'yaw']
+    ],
+    [['roll', 'roll', 'roll', 'roll'],
+     ['yaw', 'yaw', 'yaw', 'yaw'],
      ['roll', 'roll', 'roll', 'roll'],
      ['pitch', 'yaw', 'pitch', 'yaw']
     ]
 ]
 
 const rotationMatrix_HSense = [
-    [[1,-1,1,1],
+    [[1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1],
+     [1,1,1,1]
+    ],
+    [[-1,-1,-1,-1],
+     [-1,-1,-1,-1],
+     [-1,-1,-1,-1],
+     [-1,-1,-1,-1]
+    ],
+    [[1,1,1,1],
      [1,1,1,1],
      [1,1,1,1],
      [1,1,1,1]
@@ -173,11 +225,12 @@ const getControlAxes = function(direction){
 
         console.log(`PitchSeg: ${pitchSegment} || YawSegment: ${yawSegment} || RollSegment: ${rollSegment}`)
 
-        vAxis = rotationMatrix_vertical[yawSegment][rollSegment];
-        hAxis = rotationMatrix_horizontal[pitchSegment%2][yawSegment][rollSegment]
+        vAxis = rotationMatrix_vertical[pitchSegment][yawSegment][rollSegment];
+        hAxis = rotationMatrix_horizontal[pitchSegment][yawSegment][rollSegment]
 
-        vSense = rotationMatrix_VSense[yawSegment][rollSegment]
-        hSense = rotationMatrix_HSense[pitchSegment%2][yawSegment][rollSegment]
+        vSense = rotationMatrix_VSense[pitchSegment][yawSegment][rollSegment]
+        
+        hSense = rotationMatrix_HSense[pitchSegment][yawSegment][rollSegment]
         
         return {
             vAxis,
@@ -200,8 +253,17 @@ const rotateModel = function(to){
     })
 }
 
-const rotateToAnimation = function(to){
+const animateToRotation = function(to){
     let from = Object.assign({}, modelRotation)
+    modelContainer.appendChild( genRotationAnimEl(from, to) )
+}
+
+const animateByAxis = function(axisKey, sense = 1){
+    let to = Object.assign({}, modelRotation)
+    let from = Object.assign({}, modelRotation)
+
+    to[axisKey] += 90 *sense;
+
     modelContainer.appendChild( genRotationAnimEl(from, to) )
 }
 
