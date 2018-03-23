@@ -7,7 +7,7 @@ const rotationMatrix_vertical = [  // [yaw][roll]
 ]
 
 const rotationMatrix_VSense = [ // [yaw][roll]
-    [-1,1,1,1],
+    [-1,-1,1,1],
     [1,1,1,1],
     [1,1,1,1],
     [1,1,1,1],
@@ -27,7 +27,7 @@ const rotationMatrix_horizontal = [ // [pitch][yaw][roll]
 ]
 
 const rotationMatrix_HSense = [
-    [[1,1,1,1],
+    [[1,-1,1,1],
      [1,1,1,1],
      [1,1,1,1],
      [1,1,1,1]
@@ -176,8 +176,8 @@ const getControlAxes = function(direction){
         vAxis = rotationMatrix_vertical[yawSegment][rollSegment];
         hAxis = rotationMatrix_horizontal[pitchSegment%2][yawSegment][rollSegment]
 
-        vSense = ( yawSegment == 2 ) ? 1 : -1; // if back facing us (yaw 180deg) 
-        hSense = 1;
+        vSense = rotationMatrix_VSense[yawSegment][rollSegment]
+        hSense = rotationMatrix_HSense[pitchSegment%2][yawSegment][rollSegment]
         
         return {
             vAxis,
@@ -198,6 +198,15 @@ const rotateModel = function(to){
     Object.keys(modelRotation).forEach(( key )=>{
         modelRotation[key] = modelRotation[key] % 360;
     })
+}
+
+const rotateToAnimation = function(to){
+    let from = Object.assign({}, modelRotation)
+    modelContainer.appendChild( genRotationAnimEl(from, to) )
+}
+
+const rotPos = function (pitch, yaw, roll){
+    return { pitch: pitch*90, yaw: yaw*90, roll:roll*90}
 }
 
 //connections.listenForControls(recieveControl)
