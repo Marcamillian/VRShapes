@@ -110,9 +110,13 @@ let modelArray_vCross=[
 
 const genModelHTML = (modelArray)=>{
      
-    const layers = modelArray.length;
-    const layer_rows = modelArray[0].length;
-    const layer_cols = modelArray[0][0].length;
+    const layers = modelArray.length; // y in eurler axis
+    const layer_rows = modelArray[0].length; // z in euler axis
+    const layer_cols = modelArray[0][0].length; // x in euler axis
+
+    const modelCenter_x = (layer_cols/2) - 0.5;
+    const modelCenter_y = (layers/2) - 0.5;
+    const modelCenter_z = (layer_rows/2) - 0.5;
 
     /*
         TODO: check that each layer has the same dims
@@ -127,14 +131,15 @@ const genModelHTML = (modelArray)=>{
         for( z=0; z < layer_rows ; z++ ){
             for( x=0; x < layer_cols; x++ ){
                 let cube = genCubeHTML(modelArray[y][z][x]);
-                cube.setAttribute('position', `${x} ${-y} ${z}`)
+                cube.setAttribute('position', `${x - modelCenter_x} ${-y + modelCenter_y} ${z - modelCenter_z}`)
                 container.appendChild(cube)
             }
         }
     }
 
-    // set the container to the middle
-    container.setAttribute('position', `${0} ${0} ${-layer_rows/2}` )
+    // TODO: make the origin of the object he middle of the model
+
+
 
     return container;
 }
