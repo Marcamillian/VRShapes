@@ -81,9 +81,68 @@ const recieveControl = function(wsData){
 
 connections.listenForControls(recieveControl)
 
+let modelArray_cube = [
+    [ // layers
+        [ ['green'], ['green'], ['green'] ], // rows  | cubes
+        [ ['green'], ['green'], ['green'] ],
+        [ ['green'], ['green'], ['green'] ]
+    ],
+    [
+        [ ['red'], ['green'], ['red'] ],
+        [ ['green'], ['red'], ['green'] ],
+        [ ['red'], ['green'], ['red'] ]
+    ],
+    [
+        [ ['yellow'], ['green'], ['yellow'] ],
+        [ ['green'], ['green'], ['green'] ],
+        [ ['yellow'], ['green'], ['yellow'] ]
+    ]
+]
+
+let modelArray_hCross=[
+
+]
+
+let modelArray_vCross=[
+
+]
 
 
+const genModelHTML = (modelArray)=>{
+     
+    const layers = modelArray.length;
+    const layer_rows = modelArray[0].length;
+    const layer_cols = modelArray[0][0].length;
 
+    /*
+        TODO: check that each layer has the same dims
+         !!  as long as two are the same we are OK
+    */
 
+    // generate a container for the model
+    let container = document.createElement('a-entity');
 
+    // step through the array creating each cubes html
+    for( y=0; y < layers ; y++ ){
+        for( z=0; z < layer_rows ; z++ ){
+            for( x=0; x < layer_cols; x++ ){
+                let cube = genCubeHTML(modelArray[y][z][x]);
+                cube.setAttribute('position', `${x} ${-y} ${z}`)
+                container.appendChild(cube)
+            }
+        }
+    }
 
+    // set the container to the middle
+    container.setAttribute('position', `${0} ${0} ${-layer_rows/2}` )
+
+    return container;
+}
+
+genCubeHTML = (color = 'white')=>{
+    let cube = document.createElement('a-box')
+    cube.setAttribute('color', color)
+    return cube
+}
+
+container.appendChild(genModelHTML(modelArray_cube));
