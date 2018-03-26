@@ -135,8 +135,8 @@ const genRotationAnimEl = function (from,to){
 
     var rotateAnimation = document.createElement('a-animation')
 
-    console.log(`from || ${from.pitch} ${from.yaw} ${from.roll}`)
-    console.log(`to || ${to.pitch} ${to.yaw} ${to.roll}`)
+    //console.log(`from || ${from.pitch} ${from.yaw} ${from.roll}`)
+    //console.log(`to || ${to.pitch} ${to.yaw} ${to.roll}`)
     
     rotateAnimation.setAttribute('attribute', 'rotation')
     rotateAnimation.setAttribute('dur', '1000')
@@ -223,7 +223,7 @@ const getControlAxes = function(direction){
         let yawSegment = Math.ceil(modelRotation.yaw/90)%4
         let rollSegment = Math.ceil(modelRotation.roll/90)%4
 
-        console.log(`PitchSeg: ${pitchSegment} || YawSegment: ${yawSegment} || RollSegment: ${rollSegment}`)
+        //console.log(`PitchSeg: ${pitchSegment} || YawSegment: ${yawSegment} || RollSegment: ${rollSegment}`)
 
         vAxis = rotationMatrix_vertical[pitchSegment][yawSegment][rollSegment];
         hAxis = rotationMatrix_horizontal[pitchSegment][yawSegment][rollSegment]
@@ -390,7 +390,7 @@ const genModelHTML = (modelArray)=>{
 genCubeHTML = (color)=>{
     // exit if the value passed is not an array or is empty
     if( !Array.isArray(color) || color.length == 0){
-        console.log("no cube")
+        //console.log("no cube")
         return 
     } 
     let cube = document.createElement('a-box')
