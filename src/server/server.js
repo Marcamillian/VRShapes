@@ -32,10 +32,14 @@ app.use(sessionParser);
 
 // EXPRESS ROUTING
 app.post('/login', (req, res)=>{ // for initialising the websocket connection
+    
+    console.log("wss clients:", wss.clients)
+
+    console.log("HTTP request to set up the session")
     const id=uuid.v4();
     
-    console.log(`Updating session for user ${id}`)
     req.session.userId = id;
+    console.log(`Creating and assigning sessionID: ${req.session.userId}`)
 
     res.send({result:"OK", message: 'Session updated '})
 })
@@ -58,21 +62,32 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
     if(keysPressed[76]){    //k
         wss.broadcast("control","right")
     }
+    
+        // orientation of the model
+    var horizontal;
+    var vertical;
+    var pitchThing = shapeRotation.pitch/180
+    var rollThing = shapeRotation.roll/180;
+    horizontal = (Math.round(pitchThing) == pitchThing) ? 'pitch' : 'yaw';
+    vertical = (Math.round(rollThing) == rollThing) ? 'roll' : 'pitch'
 
-    if(keysPressed[37]){
-        rotateTo.pitch += 90
+    console.log(`rotate ${horizontal} ${vertical}`)
+
+    // create the roll to animation
+    if(keysPressed[37]){ // left
+        rotateTo.roll += 90
         rotateUpdate = true
     }
-    if(keysPressed[38]){  
+    if(keysPressed[38]){  // up
         rotateTo.pitch -= 90
         rotateUpdate = true
     }
-    if(keysPressed[39]){  
-        rotateTo.yaw += 90
+    if(keysPressed[39]){  // right
+        rotateTo.roll -= 90
         rotateUpdate = true
     }
-    if(keysPressed[40]){  
-        rotateTo.yaw -= 90
+    if(keysPressed[40]){  // down
+        rotateTo.pitch += 90
         rotateUpdate = true
     }
 
@@ -85,7 +100,7 @@ app.post('/control', (req, res)=>{ // for pushing control to the VR view
             }
         )
 
-        // update the 
+        // update the model
         shapeRotation.pitch = rotateTo.pitch
         shapeRotation.yaw = rotateTo.yaw
         shapeRotation.roll = rotateTo.roll
@@ -105,13 +120,15 @@ wss = new WebSocket.Server({
         sessionParser(info.req, {}, ()=>{
             console.log(`Session is parsed for user: ${info.req.session.userId}`)
             // reject the connection if the user if not revognised
-            done(info.req.session.userId)
+            //done(info.req.session.userId)
+            done(true)  // automatically accept the connection
         })
     },server
 })
 
 // CONFIGURE WEBSOCKET SERVER
 wss.on(`connection`, (ws,req)=>{
+
     ws.userId = req.session.userId;
 
     ws.on('message', (response)=>{

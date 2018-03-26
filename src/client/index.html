@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title>My First VR World</title>
-    <script src="aframe-v0.5.0.js"></script>
-    <script src="ws.js"></script>
+    <!-- <script src="aframe-v0.5.0.js"></script> -->
+    <script src="../../aframe/dist/aframe-master.js"></script>
+    <script src="./aframe-components.js"></script>
+    <!--<script src="connections.js"></script>-->
   </head>
   <body>
   <!-- add VR here -->
@@ -12,17 +14,33 @@
   <a-scene>
                 <!-- x y z-->
     <a-entity id="shape-container" position="0 0 0" rotation="0 0 0">
-      <a-box position="0 0 0"  rotation="0 0 0" color="red"></a-box>
-      <a-box position="0 1 0"  rotation="0 0 0" color="green"></a-box>
-      <a-box position="0 2 0"  rotation="0 0 0" color="yellow"></a-box>
-      <a-box position="0  0"  rotation="0 0 0" color="#ff0000"></a-box>
-      <a-box position="0 4 0"  rotation="0 0 0" color="#ff0000"></a-box>
-      <a-box position="1 1 0"  rotation="0 0 0" color="#ff0000"></a-box>
+      <!--
+      <a-box position="1 0 0" color="#E91E63"></a-box>
+      <a-box position="-1 0 0" color="#C2185B"></a-box>
+      <a-box position="0 1 0" color="#2196F3"></a-box>
+      <a-box position="0 -1 0" color="#1976D2"></a-box>
+      <a-box position="0 0 1" color="#FFC107"></a-box>
+      <a-box position="0 0 -1" color="#FFA000"></a-box>
+      -->
+
     </a-entity>
 
-    <a-entity position="0 0 3.8">
-     <a-camera></a-camera>
+    <a-entity position="0 0 5">
+     <a-camera>
+       <a-cursor></a-cursor>
+     </a-camera>
     </a-entity>  
+
+    <a-triangle class="triange-test" rotation="-90 0 0"></a-triangle>
+
+    <a-box gaze-control control-direction="right" position="4 1 0"  rotation="0 45 0" color="darkgrey"></a-box>
+    <a-box gaze-control control-direction="left" position="-4 1 0"  rotation="0 45 0" color="darkgrey"></a-box>
+    <a-box gaze-control control-direction="up" position="0 4 0"  rotation="0 45 0" color="darkgrey"></a-box>
+    <a-box gaze-control control-direction="down" position="0 -4 0"  rotation="0 45 0" color="darkgrey"></a-box>
+
+    <a-sky color="grey"></a-sky>
+
+    
 
   </a-scene>
   <script src="script.js"></script>
