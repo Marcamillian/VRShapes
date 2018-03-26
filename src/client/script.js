@@ -125,9 +125,25 @@ let modelArray_vCross=[
     ]
 ]
 
+let shapeTest = [
+    [
+        [['red'],['red'],['red']]
+    ],
+    [
+        [['yellow'],['yellow'],['yellow']],
+        [['yellow'],['yellow'],['yellow']]
+    ],
+    [
+        [['green'],['green'],['green']],
+        [['green'],['green'],['green']],
+        [['green'],['green'],['green']]
+    ]
+]
+
 
 const genModelHTML = (modelArray)=>{
-     
+    
+    // works only for cube based definitions - 
     const layers = modelArray.length; // y in eurler axis
     const layer_rows = modelArray[0].length; // z in euler axis
     const layer_cols = modelArray[0][0].length; // x in euler axis
@@ -166,7 +182,8 @@ const genModelHTML = (modelArray)=>{
 }
 
 genCubeHTML = (color)=>{
-    if(color.length == 0){
+    // exit if the value passed is not an array or is empty
+    if( !Array.isArray(color) || color.length == 0){
         console.log("no cube")
         return 
     } 
@@ -175,4 +192,4 @@ genCubeHTML = (color)=>{
     return cube
 }
 
-container.appendChild(genModelHTML(modelArray_vCross));
+container.appendChild(genModelHTML(shapeTest));
