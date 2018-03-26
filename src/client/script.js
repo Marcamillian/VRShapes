@@ -79,7 +79,7 @@ const recieveControl = function(wsData){
      
 }
 
-connections.listenForControls(recieveControl)
+//connections.listenForControls(recieveControl)
 
 let modelArray_cube = [
     [ // layers
@@ -93,18 +93,36 @@ let modelArray_cube = [
         [ ['red'], ['green'], ['red'] ]
     ],
     [
+        [ ['green'], [], ['yellow'] ],
+        [ ['green'], [], ['green'] ],
+        [ ['green'], [], ['yellow'] ]
+    ],
+    [
         [ ['yellow'], ['green'], ['yellow'] ],
         [ ['green'], ['green'], ['green'] ],
         [ ['yellow'], ['green'], ['yellow'] ]
     ]
+
 ]
 
 let modelArray_hCross=[
-
+    [ // layers
+        [ [], ['green'], [] ], // rows  | cubes
+        [ ['green'], ['green'], ['green'] ],
+        [ [], ['green'], [] ]
+    ]
 ]
 
 let modelArray_vCross=[
-
+    [
+        [[],['red'],[]]
+    ],
+    [
+        [['red'],['red'],['red']]
+    ],
+    [
+        [[],['red'],[]]
+    ]
 ]
 
 
@@ -131,8 +149,11 @@ const genModelHTML = (modelArray)=>{
         for( z=0; z < layer_rows ; z++ ){
             for( x=0; x < layer_cols; x++ ){
                 let cube = genCubeHTML(modelArray[y][z][x]);
-                cube.setAttribute('position', `${x - modelCenter_x} ${-y + modelCenter_y} ${z - modelCenter_z}`)
-                container.appendChild(cube)
+                if(cube != undefined){
+                    cube.setAttribute('position', `${x - modelCenter_x} ${-y + modelCenter_y} ${z - modelCenter_z}`)
+                    container.appendChild(cube)
+                }
+                
             }
         }
     }
@@ -144,10 +165,14 @@ const genModelHTML = (modelArray)=>{
     return container;
 }
 
-genCubeHTML = (color = 'white')=>{
+genCubeHTML = (color)=>{
+    if(color.length == 0){
+        console.log("no cube")
+        return 
+    } 
     let cube = document.createElement('a-box')
     cube.setAttribute('color', color)
     return cube
 }
 
-container.appendChild(genModelHTML(modelArray_cube));
+container.appendChild(genModelHTML(modelArray_vCross));
