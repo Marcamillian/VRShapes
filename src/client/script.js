@@ -130,12 +130,12 @@ let shapeTest = [
         [['red'],['red'],['red']]
     ],
     [
-        [['yellow'],['yellow'],['yellow']],
-        [['yellow'],['yellow'],['yellow']]
+        [[],['yellow']],
+        [[],['yellow']]
     ],
     [
         [['green'],['green'],['green']],
-        [['green'],['green'],['green']],
+        [['green'],['green']],
         [['green'],['green'],['green']]
     ]
 ]
@@ -145,12 +145,23 @@ const genModelHTML = (modelArray)=>{
     
     // works only for cube based definitions - 
     const layers = modelArray.length; // y in eurler axis
-    const layer_rows = modelArray[0].length; // z in euler axis
-    const layer_cols = modelArray[0][0].length; // x in euler axis
+    const layer_rows_max = modelArray.map((layer)=>{
+                                    return layer.length
+                            }).reduce(findMax);
+    const layer_cols_max = modelArray.map((layer)=>{
+                                return layer.map((row)=>{
+                                    return row.length // number of elements in the row
+                                }).reduce( findMax )
+                            }).reduce(findMax);
+    /*
+    modelArray.reduce( (layer, maxModelCols)=>{
+        let maxLayerCols = layer.reduce(findLongest);
+        return( maxLayerCols > maxModelCols) ? maxLayerCols : maxModelCols;
+    } )*/
 
-    const modelCenter_x = (layer_cols/2) - 0.5;
+    const modelCenter_x = (layer_cols_max/2) - 0.5;
     const modelCenter_y = (layers/2) - 0.5;
-    const modelCenter_z = (layer_rows/2) - 0.5;
+    const modelCenter_z = (layer_rows_max/2) - 0.5;
 
     /*
         TODO: check that each layer has the same dims
@@ -161,9 +172,9 @@ const genModelHTML = (modelArray)=>{
     let container = document.createElement('a-entity');
 
     // step through the array creating each cubes html
-    for( y=0; y < layers ; y++ ){
-        for( z=0; z < layer_rows ; z++ ){
-            for( x=0; x < layer_cols; x++ ){
+    for( y=0; y < modelArray.length ; y++ ){
+        for( z=0; z < modelArray[y].length ; z++ ){
+            for( x=0; x < modelArray[y][z].length ; x++ ){
                 let cube = genCubeHTML(modelArray[y][z][x]);
                 if(cube != undefined){
                     cube.setAttribute('position', `${x - modelCenter_x} ${-y + modelCenter_y} ${z - modelCenter_z}`)
@@ -190,6 +201,10 @@ genCubeHTML = (color)=>{
     let cube = document.createElement('a-box')
     cube.setAttribute('color', color)
     return cube
+}
+
+const findMax = (value, maxValue)=>{
+    return (value > maxValue) ? value : maxValue
 }
 
 container.appendChild(genModelHTML(shapeTest));
