@@ -1,4 +1,4 @@
-connections = (()=>{
+var connections = (()=>{
     var ws;
     var keysDown = {}
 
