@@ -283,11 +283,6 @@ let modelArray_cube = [
         [ ['green'], ['green'], ['green'] ]
     ],
     [
-        [ ['red'], ['green'], ['red'] ],
-        [ ['green'], ['red'], ['green'] ],
-        [ ['red'], ['green'], ['red'] ]
-    ],
-    [
         [ ['green'], [], ['yellow'] ],
         [ ['green'], [], ['green'] ],
         [ ['green'], [], ['yellow'] ]
@@ -402,4 +397,17 @@ const findMax = (value, maxValue)=>{
     return (value > maxValue) ? value : maxValue
 }
 
-modelContainer.appendChild(genModelHTML(shapeTest));
+const loadModel = (model, container)=>{
+    container = emptyHTML(container);
+    container.append(genModelHTML(model))
+    return container
+}
+
+const emptyHTML = (element)=>{
+    while(element.children.length > 0){
+        element.removeChild(element.children[0])
+    }
+    return element
+}
+
+loadModel(shapeTest, modelContainer);
