@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>My First VR World</title>
     <!-- <script src="aframe-v0.5.0.js"></script> -->
-    <script src="../../aframe/dist/aframe-master.js"></script>
+    <script src="./aframe-master.js"></script>
     <script src="./aframe-components.js"></script>
     <script src="./models.js"></script>
     <script src="connections.js"></script>
@@ -36,6 +36,9 @@
     <a-box gaze-control control-direction="left" position="-4 1 0"  rotation="0 45 0" color="darkgrey"></a-box>
     <a-box gaze-control control-direction="up" position="0 4 0"  rotation="0 45 0" color="darkgrey"></a-box>
     <a-box gaze-control control-direction="down" position="0 -4 0"  rotation="0 45 0" color="darkgrey"></a-box>
+
+    <a-box model-load-button model-name="ch_cube" position="1 7 0" color="purple"></a-box>
+    <a-box model-load-button model-name="pointer" position="-1 7 0" color="orange"></a-box>
 
     <a-sky color="grey"></a-sky>
 

@@ -1,3 +1,4 @@
+
 AFRAME.registerComponent('gaze-control',{
     schema:{
     },
@@ -45,6 +46,19 @@ AFRAME.registerComponent('gaze-control',{
 
         el.addEventListener('mouseleave', function(){
             el.setAttribute('color', defaultColor)
+        })
+    }
+})
+
+AFRAME.registerComponent('model-load-button',{
+    schema:{
+    },
+    init: function(){
+        var el = this.el;
+        var modelName = el.getAttribute('model-name');
+
+        el.addEventListener('mouseenter', ()=>{
+            loadModel(models[modelName], modelContainer)
         })
     }
 })

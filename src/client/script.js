@@ -353,13 +353,17 @@ const emptyHTML = (element)=>{
     return element
 }
 
+/*
 const genModelLoadButtons = (modelsObject, buttonOrigin = {x=0,y=0,z=0} )=>{
+    // TODO: Build out this function
     
+
 }
+*/
 
 
 // implementation
 
-connections.listenForControls(recieveControl)
+//connections.listenForControls(recieveControl)
 
 loadModel(models["pointer"], modelContainer);
