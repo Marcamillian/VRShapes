@@ -94,6 +94,7 @@ const rotationMatrix_HSense = [
 // = Define variables
 
 var modelContainer = document.querySelector('#shape-container'); // for removing animation
+var scene = document.querySelector('a-scene');
 var modelRotation = { pitch: 0, yaw: 0, roll: 0 }
 
 // Event listeners
@@ -131,29 +132,7 @@ modelContainer.addEventListener('animationend', function(){
 
 // == Functions ==
 
-const genRotationAnimEl = function (from,to){
 
-    var rotateAnimation = document.createElement('a-animation')
-
-    //console.log(`from || ${from.pitch} ${from.yaw} ${from.roll}`)
-    //console.log(`to || ${to.pitch} ${to.yaw} ${to.roll}`)
-    
-    rotateAnimation.setAttribute('attribute', 'rotation')
-    rotateAnimation.setAttribute('dur', '1000')
-    rotateAnimation.setAttribute('fill', 'forwards')
-    rotateAnimation.setAttribute('from', `${from.pitch} ${from.yaw} ${from.roll}`)
-    rotateAnimation.setAttribute('to', `${to.pitch} ${to.yaw} ${to.roll}`)
-
-    rotateAnimation.setAttribute('repeat', '0')
-
-    return rotateAnimation
-}
-
-const removeAnimations = function (element){
-    element.querySelectorAll('a-animation').forEach((animation)=>{
-        element.removeChild(animation)
-    })
-}
 
 const recieveControl = function(wsData){
     switch(wsData.type){
@@ -204,12 +183,35 @@ const recieveControl = function(wsData){
      
 }
 
+// == animation related functions
+
 const hasAnimations = function(element){
     return (element.querySelectorAll('a-animation').length > 0 ) ? true : false;
 }
 
-// something that rotates properly relative to the current
-// rotation of the model
+const genRotationAnimEl = function (from,to){
+
+    var rotateAnimation = document.createElement('a-animation')
+
+    //console.log(`from || ${from.pitch} ${from.yaw} ${from.roll}`)
+    //console.log(`to || ${to.pitch} ${to.yaw} ${to.roll}`)
+    
+    rotateAnimation.setAttribute('attribute', 'rotation')
+    rotateAnimation.setAttribute('dur', '1000')
+    rotateAnimation.setAttribute('fill', 'forwards')
+    rotateAnimation.setAttribute('from', `${from.pitch} ${from.yaw} ${from.roll}`)
+    rotateAnimation.setAttribute('to', `${to.pitch} ${to.yaw} ${to.roll}`)
+
+    rotateAnimation.setAttribute('repeat', '0')
+
+    return rotateAnimation
+}
+
+const removeAnimations = function (element){
+    element.querySelectorAll('a-animation').forEach((animation)=>{
+        element.removeChild(animation)
+    })
+}
 const getControlAxes = function(direction){
 
         // there are 6 faces we could be looking at - jsut need to figure out which and which orientation
@@ -271,65 +273,7 @@ const rotPos = function (pitch, yaw, roll){
     return { pitch: pitch*90, yaw: yaw*90, roll:roll*90}
 }
 
-//connections.listenForControls(recieveControl)
-
-
-//connections.listenForControls(recieveControl)
-
-let modelArray_cube = [
-    [ // layers
-        [ ['green'], ['green'], ['green'] ], // rows  | cubes
-        [ ['green'], ['green'], ['green'] ],
-        [ ['green'], ['green'], ['green'] ]
-    ],
-    [
-        [ ['green'], [], ['yellow'] ],
-        [ ['green'], [], ['green'] ],
-        [ ['green'], [], ['yellow'] ]
-    ],
-    [
-        [ ['yellow'], ['green'], ['yellow'] ],
-        [ ['green'], ['green'], ['green'] ],
-        [ ['yellow'], ['green'], ['yellow'] ]
-    ]
-
-]
-
-let modelArray_hCross=[
-    [ // layers
-        [ [], ['green'], [] ], // rows  | cubes
-        [ ['green'], ['green'], ['green'] ],
-        [ [], ['green'], [] ]
-    ]
-]
-
-let modelArray_vCross=[
-    [
-        [[],['red'],[]]
-    ],
-    [
-        [['red'],['red'],['red']]
-    ],
-    [
-        [[],['red'],[]]
-    ]
-]
-
-let shapeTest = [
-    [
-        [['red'],['red'],['red']]
-    ],
-    [
-        [[],['yellow']],
-        [[],['yellow']]
-    ],
-    [
-        [['green'],['green'],['green']],
-        [['green'],['green']],
-        [['green'],['green'],['green']]
-    ]
-]
-
+// == model related functions
 
 const genModelHTML = (modelArray)=>{
     
@@ -382,7 +326,7 @@ const genModelHTML = (modelArray)=>{
     return container;
 }
 
-genCubeHTML = (color)=>{
+const genCubeHTML = (color)=>{
     // exit if the value passed is not an array or is empty
     if( !Array.isArray(color) || color.length == 0){
         //console.log("no cube")
@@ -410,4 +354,39 @@ const emptyHTML = (element)=>{
     return element
 }
 
-loadModel(shapeTest, modelContainer);
+const genModelLoadButtons = (modelsObject, origin= {x:0,y:0,z:0})=>{
+    // TODO: Build out this function
+    let modelNames = Object.keys(modelsObject);
+    let modelChangeButtonsContainer = document.createElement("a-entity")
+    let buttonSpacing = 3;
+    let allButtonHeight = modelNames.length + buttonSpacing*(modelNames.length-1)
+
+    modelChangeButtonsContainer.setAttribute('position', `${origin.x} ${origin.y} ${origin.z}`)
+    modelChangeButtonsContainer.classList.add("model-load-buttons");
+
+    modelNames.forEach((modelName, index)=>{
+        let modelButton = genModelLoadButton('purple');
+        let button_yPos = -(allButtonHeight/2) + (1+buttonSpacing)*(index)
+
+        modelButton.setAttribute('model-name', modelName);
+        modelButton.setAttribute('position', `${0} ${button_yPos} ${0}`)
+        modelChangeButtonsContainer.appendChild(modelButton)
+    })
+    return modelChangeButtonsContainer;
+}
+const genModelLoadButton = (color)=>{
+    let button = document.createElement('a-sphere');
+    if(color) {
+        button.setAttribute('color', color);
+    }
+
+    button.setAttribute('model-load-button', "");
+    return button
+}
+
+// implementation
+
+//connections.listenForControls(recieveControl)
+
+loadModel(models["pointer"], modelContainer);
+scene.appendChild(genModelLoadButtons(models, {x:10, y:0,z:3}))
