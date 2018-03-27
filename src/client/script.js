@@ -94,6 +94,7 @@ const rotationMatrix_HSense = [
 // = Define variables
 
 var modelContainer = document.querySelector('#shape-container'); // for removing animation
+var scene = document.querySelector('a-scene');
 var modelRotation = { pitch: 0, yaw: 0, roll: 0 }
 
 // Event listeners
@@ -353,17 +354,39 @@ const emptyHTML = (element)=>{
     return element
 }
 
-/*
-const genModelLoadButtons = (modelsObject, buttonOrigin = {x=0,y=0,z=0} )=>{
+const genModelLoadButtons = (modelsObject, origin= {x:0,y:0,z:0})=>{
     // TODO: Build out this function
-    
+    let modelNames = Object.keys(modelsObject);
+    let modelChangeButtonsContainer = document.createElement("a-entity")
+    let buttonSpacing = 3;
+    let allButtonHeight = modelNames.length + buttonSpacing*(modelNames.length-1)
 
+    modelChangeButtonsContainer.setAttribute('position', `${origin.x} ${origin.y} ${origin.z}`)
+    modelChangeButtonsContainer.classList.add("model-load-buttons");
+
+    modelNames.forEach((modelName, index)=>{
+        let modelButton = genModelLoadButton('purple');
+        let button_yPos = -(allButtonHeight/2) + (1+buttonSpacing)*(index)
+
+        modelButton.setAttribute('model-name', modelName);
+        modelButton.setAttribute('position', `${0} ${button_yPos} ${0}`)
+        modelChangeButtonsContainer.appendChild(modelButton)
+    })
+    return modelChangeButtonsContainer;
 }
-*/
+const genModelLoadButton = (color)=>{
+    let button = document.createElement('a-sphere');
+    if(color) {
+        button.setAttribute('color', color);
+    }
 
+    button.setAttribute('model-load-button', "");
+    return button
+}
 
 // implementation
 
 //connections.listenForControls(recieveControl)
 
 loadModel(models["pointer"], modelContainer);
+scene.appendChild(genModelLoadButtons(models, {x:10, y:0,z:3}))

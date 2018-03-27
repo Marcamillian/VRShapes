@@ -32,5 +32,28 @@ const models = {
             [[],["#1976D2"],[]],
             [[],[],[]]
         ]
+    ],
+    "laddder":[
+        [
+            [['black'],[],['black']]
+        ],
+        [
+            [['black'],['red'],['black']]
+        ],
+        [
+            [['black'],[],['black']]
+        ],
+        [
+            [['black'],['red'],['black']]
+        ],
+        [
+            [['black'],[],['black']]
+        ],
+        [
+            [['black'],['red'],['black']]
+        ],
+        [
+            [['black'],[],['black']]
+        ]
     ]
 }
